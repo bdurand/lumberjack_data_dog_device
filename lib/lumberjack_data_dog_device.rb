@@ -6,7 +6,7 @@ module Lumberjack
   # This Lumberjack device logs output to another device as JSON formatted text that maps fields
   # to the standard JSON payload for DataDog log collection.
   #
-  # See https://docs.datadoghq.com/logs/log_collection/?tab=tcpussite
+  # See https://docs.datadoghq.com/logs/log_collection
   class DataDogDevice < JsonDevice
 
     # Formatter to format a messge as an error if it is an exception.
