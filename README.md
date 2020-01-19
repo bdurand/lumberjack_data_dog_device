@@ -21,7 +21,7 @@ This gem provides a logging device that produces JSON output that matches the st
 
 * All other tags are sent as is. If a tag name includes a dot, it will be sent as a nested JSON structure.
 
-This device extends from [`Lumberjack::JsonDevice`]().
+This device extends from [`Lumberjack::JsonDevice`](). It is not tied to Data Dog in any way other than that it is opinionated about how to map and format some log tags. It can be used with other services or pipelines without issue.
 
 ## Example
 
