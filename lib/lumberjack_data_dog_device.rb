@@ -32,15 +32,20 @@ module Lumberjack
       def call(tags)
         copy = {}
         tags.each do |name, value|
+          value = remove_empty_values(value)
           next if value.nil?
+
           if name == "error" && value.is_a?(Exception)
             copy[name] = {
               "kind" => value.class.name,
               "message" => value.message,
               "trace" => value.backtrace
             }
+          elsif name.include?(".")
+            names = name.split(".")
+            next_value_in_hash(copy, names, value)
           else
-            copy[name] = remove_empty_values(value)
+            copy[name] = value
           end
         end
         copy
@@ -65,15 +70,44 @@ module Lumberjack
           value
         end
       end
+
+      def next_value_in_hash(hash, keys, value)
+        key = keys.first
+        if keys.size == 1
+          hash[key] = value
+        else
+          current = hash[key]
+          unless current.is_a?(Hash)
+            current = {}
+            hash[key] = current
+          end
+          next_value_in_hash(current, keys[1, keys.size], value)
+        end
+      end
+    end
+
+    class DurationFormatter
+      def initialize(multiplier)
+        @multiplier = multiplier
+      end
+
+      def call(value)
+        if value.is_a?(Numeric)
+          value = (value.to_f * @multiplier).round
+        end
+        { "duration" => value }
+      end
     end
 
     DATA_DOG_MAPPING = {
       time: "timestamp",
       severity: "status",
       progname: ["logger", "name"],
-      thread: ["logger", "thread_name"],
       pid: "pid",
       message: MessageExceptionFormatter.new,
+      duration: DurationFormatter.new(1_000_000_000),
+      duration_ms: DurationFormatter.new(1_000_000),
+      duration_ns: "duration",
       tags: DataDogTagsFormatter.new
     }.freeze
 

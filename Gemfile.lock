@@ -1,24 +1,21 @@
-GIT
-  remote: https://github.com/bdurand/lumberjack.git
-  revision: 4b197590eab66b794afb968ec44bd68bae567d08
-  branch: 1.2.0
-  specs:
-    lumberjack (1.2.0)
-
-GIT
-  remote: https://github.com/bdurand/lumberjack_json_device.git
-  revision: 0e730998757f51060c5c49f94394330f3fb58371
-  specs:
-    lumberjack_json_device (1.0.0)
-      lumberjack (>= 1.2)
-      multi_json
-
 PATH
   remote: .
   specs:
     lumberjack_data_dog_device (1.0.0)
       lumberjack (>= 1.1)
       multi_json
+
+PATH
+  remote: /Users/bdurand/dev/projects/lumberjack_json_device
+  specs:
+    lumberjack_json_device (1.0.0)
+      lumberjack (>= 1.2)
+      multi_json
+
+PATH
+  remote: /Users/bdurand/dev/projects/lumberjack
+  specs:
+    lumberjack (1.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -44,7 +41,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  lumberjack (~> 1.2.0)!
+  lumberjack!
   lumberjack_data_dog_device!
   lumberjack_json_device!
   rake
