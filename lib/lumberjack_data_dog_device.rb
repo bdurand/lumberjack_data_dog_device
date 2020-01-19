@@ -9,17 +9,35 @@ module Lumberjack
   # See https://docs.datadoghq.com/logs/log_collection
   class DataDogDevice < JsonDevice
 
+    module ExceptionHash
+      
+      protected
+      
+      def exception_hash(exception, device)
+        hash = {"kind" => exception.class.name}
+        hash["message"] = exception.message unless exception.message.nil?
+        trace = exception.backtrace
+        if trace && device && device.respond_to?(:backtrace_cleaner) && device.backtrace_cleaner
+          trace = device.backtrace_cleaner.call(trace)
+        end
+        hash["trace"] = trace if trace
+        hash
+      end
+    end
+    
     # Formatter to format a messge as an error if it is an exception.
     class MessageExceptionFormatter
+      include ExceptionHash
+      
+      def initialize(device = nil)
+        @device = device
+      end
+      
       def call(object)
         if object.is_a?(Exception)
           {
             "message" => object.inspect,
-            "error" => {
-              "kind" => object.class.name,
-              "message" => object.message,
-              "trace" => object.backtrace,
-            }
+            "error" => exception_hash(object, @device)
           }
         else
           { "message" => object }
@@ -29,6 +47,12 @@ module Lumberjack
 
     # Formatter to remove empty tag values and expand the error tag if it is an exception.
     class DataDogTagsFormatter
+      include ExceptionHash
+
+      def initialize(device = nil)
+        @device = device
+      end
+
       def call(tags)
         copy = {}
         tags.each do |name, value|
@@ -36,11 +60,7 @@ module Lumberjack
           next if value.nil?
 
           if name == "error" && value.is_a?(Exception)
-            copy[name] = {
-              "kind" => value.class.name,
-              "message" => value.message,
-              "trace" => value.backtrace
-            }
+            copy[name] = exception_hash(value, @device)
           elsif name.include?(".")
             names = name.split(".")
             next_value_in_hash(copy, names, value)
@@ -99,22 +119,32 @@ module Lumberjack
       end
     end
 
-    DATA_DOG_MAPPING = {
-      time: "timestamp",
-      severity: "status",
-      progname: ["logger", "name"],
-      pid: "pid",
-      message: MessageExceptionFormatter.new,
-      duration: DurationFormatter.new(1_000_000_000),
-      duration_ms: DurationFormatter.new(1_000_000),
-      duration_micros: DurationFormatter.new(1_000),
-      duration_ns: "duration",
-      tags: DataDogTagsFormatter.new
-    }.freeze
-
-    def initialize(stream_or_device)
-      super(stream_or_device, mapping: DATA_DOG_MAPPING)
+    # You can specify a backtrace cleaner that will be called with exception backtraces before they
+    # are added to the payload. You can use this to remove superfluous lines, compress line length, etc.
+    # One use for it is to keep stack traces clean and prevent them from overflowing the limit on
+    # the payload size for an individual log entry.
+    attr_accessor :backtrace_cleaner
+    
+    def initialize(stream_or_device, backtrace_cleaner: nil)
+      super(stream_or_device, mapping: data_dog_mapping)
+      self.backtrace_cleaner = backtrace_cleaner
     end
-
+    
+    private
+    
+    def data_dog_mapping
+      {
+        time: "timestamp",
+        severity: "status",
+        progname: ["logger", "name"],
+        pid: "pid",
+        message: MessageExceptionFormatter.new(self),
+        duration: DurationFormatter.new(1_000_000_000),
+        duration_ms: DurationFormatter.new(1_000_000),
+        duration_micros: DurationFormatter.new(1_000),
+        duration_ns: "duration",
+        tags: DataDogTagsFormatter.new(self)
+      }
+    end
   end
 end
