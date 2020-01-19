@@ -20,18 +20,6 @@ describe Lumberjack::DataDogDevice do
       })
     end
 
-    it "should set the thread tag as logger.thread if present" do
-      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", "test", 12345, "thread" => "mythread")
-      data = device.entry_as_json(entry)
-      expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
-        "status" => entry.severity_label,
-        "logger" => { "name" => entry.progname, "thread_name" => "mythread" },
-        "pid" => entry.pid,
-        "message" => entry.message
-      })
-    end
-
     it "should not include empty tags" do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", nil, 12345, {})
       data = device.entry_as_json(entry)
@@ -117,6 +105,17 @@ describe Lumberjack::DataDogDevice do
         "status" => entry.severity_label,
         "message" => entry.message,
         "duration" => 1_200_000_000
+      })
+    end
+
+    it "should convert duration_ns from microseconds to nanoseconds" do
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "duration_micros" => 1200)
+      data = device.entry_as_json(entry)
+      expect(data).to eq({
+        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "status" => entry.severity_label,
+        "message" => entry.message,
+        "duration" => 1_200_000
       })
     end
 

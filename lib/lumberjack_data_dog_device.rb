@@ -107,6 +107,7 @@ module Lumberjack
       message: MessageExceptionFormatter.new,
       duration: DurationFormatter.new(1_000_000_000),
       duration_ms: DurationFormatter.new(1_000_000),
+      duration_micros: DurationFormatter.new(1_000),
       duration_ns: "duration",
       tags: DataDogTagsFormatter.new
     }.freeze

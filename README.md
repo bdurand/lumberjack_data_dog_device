@@ -17,7 +17,7 @@ This gem provides a logging device that produces JSON output that matches the st
 
 * If the "error" tag contains an exception, it will be sent as "error.message", "error.kind", and "error.trace".
 
-* A duration can be sent as a number of seconds in the "duration" tag or as a number of milliseconds in the "duration_ms" tag or as a number of nanoseconds in the "duration_ns" tag.
+* A duration can be sent as a number of seconds in the "duration" tag or as a number of milliseconds in the "duration_ms" tag or as a number of microsectons in the "duration_micros" tag or as a number of nanoseconds in the "duration_ns" tag.
 
 * All other tags are sent as is. If a tag name includes a dot, it will be sent as a nested JSON structure.
 
