@@ -2,25 +2,16 @@ PATH
   remote: .
   specs:
     lumberjack_data_dog_device (1.0.0)
-      lumberjack (>= 1.1)
-      multi_json
-
-PATH
-  remote: /Users/bdurand/dev/projects/lumberjack_json_device
-  specs:
-    lumberjack_json_device (1.0.0)
-      lumberjack (>= 1.2)
-      multi_json
-
-PATH
-  remote: /Users/bdurand/dev/projects/lumberjack
-  specs:
-    lumberjack (1.2.0)
+      lumberjack_json_device (>= 1.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.3)
+    lumberjack (1.2.0)
+    lumberjack_json_device (1.0.0)
+      lumberjack (>= 1.2)
+      multi_json
     multi_json (1.14.1)
     rake (13.0.1)
     rspec (3.9.0)
@@ -41,9 +32,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  lumberjack!
   lumberjack_data_dog_device!
-  lumberjack_json_device!
   rake
   rspec (~> 3.0)
 
