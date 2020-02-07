@@ -23,6 +23,8 @@ This gem provides a logging device that produces JSON output that matches the st
 
 This device extends from [`Lumberjack::JsonDevice`](). It is not tied to Data Dog in any way other than that it is opinionated about how to map and format some log tags. It can be used with other services or pipelines without issue.
 
+You can optionally specify a maximum message length with the `max_message_length` option on the device. Doing so will trucate the message payload to keep it under this number of characters. This option is provided because JSON payloads get messed up and cannot be parsed if they get too big.
+
 ## Example
 
 You could log an HTTP request to some of the DataDog standard fields like this:

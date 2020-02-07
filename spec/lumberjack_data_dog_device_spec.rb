@@ -20,6 +20,25 @@ describe Lumberjack::DataDogDevice do
       })
     end
 
+    it "should log hashes in the message" do
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, {"foo" => "bar"}, "test", 12345, {})
+      data = device.entry_as_json(entry)
+      expect(data["message"]).to eq({"foo" => "bar"})
+    end
+
+    it "should convert other data types in the message to strings" do
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, ["foo", "bar"], "test", 12345, {})
+      data = device.entry_as_json(entry)
+      expect(data["message"]).to eq(["foo", "bar"].to_s)
+    end
+
+    it "should be able to limit the size of the message string" do
+      device.max_message_length = 50
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "x" * 100, "test", 12345, {})
+      data = device.entry_as_json(entry)
+      expect(data["message"]).to eq("x" * 50)
+    end
+
     it "should not include empty tags" do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", nil, 12345, {})
       data = device.entry_as_json(entry)

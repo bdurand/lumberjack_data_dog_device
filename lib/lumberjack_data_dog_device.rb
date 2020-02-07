@@ -10,9 +10,9 @@ module Lumberjack
   class DataDogDevice < JsonDevice
 
     module ExceptionHash
-      
+
       protected
-      
+
       def exception_hash(exception, device)
         hash = {"kind" => exception.class.name}
         hash["message"] = exception.message unless exception.message.nil?
@@ -24,23 +24,32 @@ module Lumberjack
         hash
       end
     end
-    
+
     # Formatter to format a messge as an error if it is an exception.
     class MessageExceptionFormatter
       include ExceptionHash
-      
+
       def initialize(device = nil)
         @device = device
       end
-      
+
       def call(object)
         if object.is_a?(Exception)
           {
             "message" => object.inspect,
             "error" => exception_hash(object, @device)
           }
-        else
+        elsif object.is_a?(Hash)
           { "message" => object }
+        elsif object.nil?
+          { "message" => nil }
+        else
+          message = object.to_s
+          max_message_length = @device.max_message_length
+          if max_message_length && message.length > max_message_length
+            message = message[0, max_message_length]
+          end
+          { "message" => message }
         end
       end
     end
@@ -124,14 +133,19 @@ module Lumberjack
     # One use for it is to keep stack traces clean and prevent them from overflowing the limit on
     # the payload size for an individual log entry.
     attr_accessor :backtrace_cleaner
-    
-    def initialize(stream_or_device, backtrace_cleaner: nil)
+
+    # You can specify a limit on the message size. Messages over this size will be split into multiple
+    # log entries to prevent overflowing the limit on message size which makes the log entries unparseable.
+    attr_accessor :max_message_length
+
+    def initialize(stream_or_device, backtrace_cleaner: nil, max_message_length: nil)
       super(stream_or_device, mapping: data_dog_mapping)
       self.backtrace_cleaner = backtrace_cleaner
+      self.max_message_length = max_message_length
     end
-    
+
     private
-    
+
     def data_dog_mapping
       {
         time: "timestamp",
