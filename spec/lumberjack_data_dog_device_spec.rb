@@ -50,6 +50,18 @@ describe Lumberjack::DataDogDevice do
       })
     end
 
+    it "should include false tags" do
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", nil, 12345, {"success" => false})
+      data = device.entry_as_json(entry)
+      expect(data).to eq({
+        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "status" => entry.severity_label,
+        "pid" => entry.pid,
+        "message" => entry.message,
+        "success" => false
+      })
+    end
+
     it "should convert dot notated tags to nested JSON" do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "http.status_code" => 200, "http.method" => "GET")
       data = device.entry_as_json(entry)
@@ -58,6 +70,36 @@ describe Lumberjack::DataDogDevice do
         "status" => entry.severity_label,
         "message" => entry.message,
         "http" => {
+          "status_code" => 200,
+          "method" => "GET"
+        }
+      })
+    end
+
+    it "should merge dot notated tags to nested JSON when hash is already included" do
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "http" => {"url" => "http://example.com"}, "http.status_code" => 200, "http.method" => "GET")
+      data = device.entry_as_json(entry)
+      expect(data).to eq({
+        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "status" => entry.severity_label,
+        "message" => entry.message,
+        "http" => {
+          "url" => "http://example.com",
+          "status_code" => 200,
+          "method" => "GET"
+        }
+      })
+    end
+
+    it "should merge hash into dot notated tags" do
+      entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "http" => {"url" => "http://example.com"}, "http.status_code" => 200, "http.method" => "GET")
+      data = device.entry_as_json(entry)
+      expect(data).to eq({
+        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "status" => entry.severity_label,
+        "message" => entry.message,
+        "http" => {
+          "url" => "http://example.com",
           "status_code" => 200,
           "method" => "GET"
         }
