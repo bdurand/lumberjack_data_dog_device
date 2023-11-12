@@ -1,7 +1,8 @@
 # Lumberjack DataDog Device
 
-[![Build Status](https://travis-ci.org/bdurand/lumberjack_data_dog_device.svg?branch=master)](https://travis-ci.org/bdurand/lumberjack_data_dog_device)
-[![Maintainability](https://api.codeclimate.com/v1/badges/372103b5d762c765a16e/maintainability)](https://codeclimate.com/github/bdurand/lumberjack_data_dog_device/maintainability)
+[![Continuous Integration](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/continuous_integration.yml)
+[![Regression Test](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/regression_test.yml/badge.svg)](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/regression_test.yml)
+[![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 
 This gem provides a logging device that produces JSON output that matches the standard fields defined for [DataDog logging](https://docs.datadoghq.com/logs/processing/attributes_naming_convention/).
 
