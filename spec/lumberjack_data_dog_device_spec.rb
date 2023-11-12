@@ -1,7 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Lumberjack::DataDogDevice do
-
   let(:device) { Lumberjack::DataDogDevice.new(output) }
   let(:output) { StringIO.new }
 
@@ -10,9 +9,9 @@ describe Lumberjack::DataDogDevice do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", "test", 12345, "foo" => "bar", "baz" => "boo")
       data = device.entry_as_json(entry)
       expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
         "status" => entry.severity_label,
-        "logger" => { "name" => entry.progname },
+        "logger" => {"name" => entry.progname},
         "pid" => entry.pid,
         "message" => entry.message,
         "foo" => "bar",
@@ -43,7 +42,7 @@ describe Lumberjack::DataDogDevice do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", nil, 12345, {})
       data = device.entry_as_json(entry)
       expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
         "status" => entry.severity_label,
         "pid" => entry.pid,
         "message" => entry.message
@@ -54,7 +53,7 @@ describe Lumberjack::DataDogDevice do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "message", nil, 12345, {"success" => false})
       data = device.entry_as_json(entry)
       expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
         "status" => entry.severity_label,
         "pid" => entry.pid,
         "message" => entry.message,
@@ -66,7 +65,7 @@ describe Lumberjack::DataDogDevice do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "http.status_code" => 200, "http.method" => "GET")
       data = device.entry_as_json(entry)
       expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
         "status" => entry.severity_label,
         "message" => entry.message,
         "http" => {
@@ -80,7 +79,7 @@ describe Lumberjack::DataDogDevice do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "http" => {"url" => "http://example.com"}, "http.status_code" => 200, "http.method" => "GET")
       data = device.entry_as_json(entry)
       expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
         "status" => entry.severity_label,
         "message" => entry.message,
         "http" => {
@@ -95,7 +94,7 @@ describe Lumberjack::DataDogDevice do
       entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "http" => {"url" => "http://example.com"}, "http.status_code" => 200, "http.method" => "GET")
       data = device.entry_as_json(entry)
       expect(data).to eq({
-        "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+        "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
         "status" => entry.severity_label,
         "message" => entry.message,
         "http" => {
@@ -110,7 +109,7 @@ describe Lumberjack::DataDogDevice do
       it "should format the message as an error if it is an exception" do
         error = nil
         begin
-          raise RuntimeError.new("boom")
+          raise "boom"
         rescue => e
           error = e
         end
@@ -118,7 +117,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, error, nil, nil, {})
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => error.inspect,
           "error" => {
@@ -132,7 +131,7 @@ describe Lumberjack::DataDogDevice do
       it "should expand the error tag if it is an exception" do
         error = nil
         begin
-          raise RuntimeError.new("boom")
+          raise "boom"
         rescue => e
           error = e
         end
@@ -140,7 +139,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "an error occurred", nil, nil, "error" => error)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "error" => {
@@ -155,7 +154,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "an error occurred", nil, nil, "error" => "error string")
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "error" => "error string"
@@ -166,7 +165,7 @@ describe Lumberjack::DataDogDevice do
         device.backtrace_cleaner = lambda { |trace| ["redacted"] }
         error = nil
         begin
-          raise RuntimeError.new("boom")
+          raise "boom"
         rescue => e
           error = e
         end
@@ -174,7 +173,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, error, nil, nil, {})
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => error.inspect,
           "error" => {
@@ -189,7 +188,7 @@ describe Lumberjack::DataDogDevice do
         device.backtrace_cleaner = lambda { |trace| ["redacted"] }
         error = nil
         begin
-          raise RuntimeError.new("boom")
+          raise "boom"
         rescue => e
           error = e
         end
@@ -197,7 +196,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "an error occurred", nil, nil, "error" => error)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "error" => {
@@ -213,7 +212,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, error, nil, nil, {})
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => error.inspect,
           "error" => {
@@ -228,7 +227,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "an error occurred", nil, nil, "error" => error)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "error" => {
@@ -244,7 +243,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "duration" => 1.2)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "duration" => 1_200_000_000
@@ -255,7 +254,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "duration_ms" => 1200)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "duration" => 1_200_000_000
@@ -266,7 +265,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "duration_micros" => 1200)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "duration" => 1_200_000
@@ -277,7 +276,7 @@ describe Lumberjack::DataDogDevice do
         entry = Lumberjack::LogEntry.new(Time.now, Logger::INFO, "test", nil, nil, "duration_ns" => 12000)
         data = device.entry_as_json(entry)
         expect(data).to eq({
-          "timestamp" => entry.time.strftime('%Y-%m-%dT%H:%M:%S.%6N%z'),
+          "timestamp" => entry.time.strftime("%Y-%m-%dT%H:%M:%S.%6N%z"),
           "status" => entry.severity_label,
           "message" => entry.message,
           "duration" => 12000
@@ -285,5 +284,4 @@ describe Lumberjack::DataDogDevice do
       end
     end
   end
-
 end
