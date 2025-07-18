@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Lumberjack::DataDogDevice do
+RSpec.describe Lumberjack::DataDogDevice do
   let(:device) { Lumberjack::DataDogDevice.new(output) }
   let(:output) { StringIO.new }
 
@@ -123,7 +123,7 @@ describe Lumberjack::DataDogDevice do
           "error" => {
             "kind" => "RuntimeError",
             "message" => "boom",
-            "trace" => error.backtrace
+            "stack" => error.backtrace
           }
         })
       end
@@ -145,7 +145,7 @@ describe Lumberjack::DataDogDevice do
           "error" => {
             "kind" => "RuntimeError",
             "message" => "boom",
-            "trace" => error.backtrace
+            "stack" => error.backtrace
           }
         })
       end
@@ -179,7 +179,7 @@ describe Lumberjack::DataDogDevice do
           "error" => {
             "kind" => "RuntimeError",
             "message" => "boom",
-            "trace" => ["redacted"]
+            "stack" => ["redacted"]
           }
         })
       end
@@ -202,7 +202,7 @@ describe Lumberjack::DataDogDevice do
           "error" => {
             "kind" => "RuntimeError",
             "message" => "boom",
-            "trace" => ["redacted"]
+            "stack" => ["redacted"]
           }
         })
       end
