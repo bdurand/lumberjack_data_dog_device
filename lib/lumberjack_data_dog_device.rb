@@ -14,11 +14,13 @@ module Lumberjack
       def exception_hash(exception, device)
         hash = {"kind" => exception.class.name}
         hash["message"] = exception.message unless exception.message.nil?
+
         trace = exception.backtrace
-        if trace && device && device.respond_to?(:backtrace_cleaner) && device.backtrace_cleaner
+        if trace && device&.respond_to?(:backtrace_cleaner) && device.backtrace_cleaner
           trace = device.backtrace_cleaner.call(trace)
         end
-        hash["trace"] = trace if trace
+        hash["stack"] = trace if trace
+
         hash
       end
     end
@@ -136,8 +138,8 @@ module Lumberjack
     # log entries to prevent overflowing the limit on message size which makes the log entries unparseable.
     attr_accessor :max_message_length
 
-    def initialize(stream_or_device, backtrace_cleaner: nil, max_message_length: nil)
-      super(stream_or_device, mapping: data_dog_mapping)
+    def initialize(stream_or_device, backtrace_cleaner: nil, max_message_length: nil, **args)
+      super(stream_or_device, mapping: data_dog_mapping, **args)
       self.backtrace_cleaner = backtrace_cleaner
       self.max_message_length = max_message_length
     end

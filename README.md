@@ -1,11 +1,13 @@
 # Lumberjack DataDog Device
 
 [![Continuous Integration](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/continuous_integration.yml)
-[![Regression Test](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/regression_test.yml/badge.svg)](https://github.com/bdurand/lumberjack_data_dog_device/actions/workflows/regression_test.yml)
 [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 [![Gem Version](https://badge.fury.io/rb/lumberjack_data_dog_device.svg)](https://badge.fury.io/rb/lumberjack_data_dog_device)
 
 This gem provides a logging device that produces JSON output that matches the standard fields defined for [DataDog logging](https://docs.datadoghq.com/logs/processing/attributes_naming_convention/).
+
+> [!WARNING]
+> This gem is no longer being maintained. It has been replaced by the [`lumberjack_data_dog`](https://github.com/bdurand/lumberjack_data_dog) gem.
 
 * The time will be sent as "timestamp" with a precision in microseconds.
 
@@ -23,7 +25,7 @@ This gem provides a logging device that produces JSON output that matches the st
 
 * All other tags are sent as is. If a tag name includes a dot, it will be sent as a nested JSON structure.
 
-This device extends from [`Lumberjack::JsonDevice`](). It is not tied to Data Dog in any way other than that it is opinionated about how to map and format some log tags. It can be used with other services or pipelines without issue.
+This device extends from [`Lumberjack::JsonDevice`](https://github.com/bdurand/lumberjack_json_device). It is not tied to Data Dog in any way other than that it is opinionated about how to map and format some log tags. It can be used with other services or pipelines without issue.
 
 You can optionally specify a maximum message length with the `max_message_length` option on the device. Doing so will trucate the message payload to keep it under this number of characters. This option is provided because JSON payloads get messed up and cannot be parsed if they get too big.
 
@@ -45,12 +47,12 @@ end
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'lumberjack_data_dog_device'
+gem "lumberjack_data_dog_device"
 ```
 
 And then execute:
 ```bash
-$ bundle
+$ bundle install
 ```
 
 Or install it yourself as:
