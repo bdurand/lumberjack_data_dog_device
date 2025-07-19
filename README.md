@@ -47,12 +47,12 @@ end
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'lumberjack_data_dog_device'
+gem "lumberjack_data_dog_device"
 ```
 
 And then execute:
 ```bash
-$ bundle
+$ bundle install
 ```
 
 Or install it yourself as:

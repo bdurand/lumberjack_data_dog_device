@@ -138,8 +138,8 @@ module Lumberjack
     # log entries to prevent overflowing the limit on message size which makes the log entries unparseable.
     attr_accessor :max_message_length
 
-    def initialize(stream_or_device, backtrace_cleaner: nil, max_message_length: nil)
-      super(stream_or_device, mapping: data_dog_mapping)
+    def initialize(stream_or_device, backtrace_cleaner: nil, max_message_length: nil, **args)
+      super(stream_or_device, mapping: data_dog_mapping, **args)
       self.backtrace_cleaner = backtrace_cleaner
       self.max_message_length = max_message_length
     end
