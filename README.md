@@ -7,7 +7,7 @@
 This gem provides a logging device that produces JSON output that matches the standard fields defined for [DataDog logging](https://docs.datadoghq.com/logs/processing/attributes_naming_convention/).
 
 > [!WARNING]
-> This gem is no longer being maintained. It has been replaced by the [`lumberjack_data_dog`](https://github.com/bdurand/lumberjack_data_dog) gem.
+> This gem is no longer being maintained. It has been replaced by the [`lumberjack_data_dog`](https://github.com/bdurand/lumberjack_datadog) gem.
 
 * The time will be sent as "timestamp" with a precision in microseconds.
 
